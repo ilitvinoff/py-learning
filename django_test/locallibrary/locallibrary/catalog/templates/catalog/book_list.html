@@ -9,6 +9,14 @@
       {% for book in book_list %}
       <li>
         <a href="{{ book.get_absolute_url }}">{{ book.title }}</a> ({{book.author}})
+        
+        {% if perms.catalog.librarian_perm %}
+          <ul>
+            <a href="{% url 'book_update' book.id %} ">Update book</a> | 
+            <a href="{% url 'book_delete' book.id%} ">Delete book</a>
+          </ul>
+        {% endif %}
+
       </li>
       {% endfor %}
 

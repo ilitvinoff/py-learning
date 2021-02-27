@@ -1,0 +1,25 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Authors</h1>
+
+{% if author_list %}
+<ul>
+
+  {% for author in author_list %}
+  <li>
+    <a href="{{ author.get_absolute_url }}">{{ author }} ({{author.date_of_birth}} - {% if author.date_of_death %}{{author.date_of_death}}{% endif %})</a>
+    {% if perms.catalog.librarian_perm %}
+      <ul>
+        <a href="{% url 'author_update' author.id %} ">Update author</a> | 
+        <a href="{% url 'author_delete' author.id%} ">Delete author</a>
+      </ul>
+    {% endif %}
+  </li>
+  {% endfor %}
+
+</ul>
+{% else %}
+<p>There are no authors in the library. :))))</p>
+{% endif %}
+{% endblock %}
