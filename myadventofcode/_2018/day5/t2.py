@@ -19,16 +19,37 @@ dabCBAcCcaDA      Either 'cC' or 'Cc' are removed (the result is the same).
 dabCBAcaDA        No further actions can be taken.
 After all possible reactions, the resulting polymer contains 10 units.
 
-How many units remain after fully reacting the polymer you scanned? (Note: in this puzzle and others, the input is large; if you copy/paste your input, make sure you get the whole thing.)"""
+How many units remain after fully reacting the polymer you scanned? (Note: in this puzzle and others, the input is large; if you copy/paste your input, make sure you get the whole thing.)
 
+Your puzzle answer was 11118.
+
+The first half of this puzzle is complete! It provides one gold star: *
+
+--- Part Two ---
+Time to improve the polymer.
+
+One of the unit types is causing problems; it's preventing the polymer from collapsing as much as it should. Your goal is to figure out which unit type is causing the most problems, remove all instances of it (regardless of polarity), fully react the remaining polymer, and measure its length.
+
+For example, again using the polymer dabAcCaCBAcCcaDA from above:
+
+Removing all A/a units produces dbcCCBcCcD. Fully reacting this polymer produces dbCBcD, which has length 6.
+Removing all B/b units produces daAcCaCAcCcaDA. Fully reacting this polymer produces daCAcaDA, which has length 8.
+Removing all C/c units produces dabAaBAaDA. Fully reacting this polymer produces daDA, which has length 4.
+Removing all D/d units produces abAcCaCBAcCcaA. Fully reacting this polymer produces abCBAc, which has length 6.
+In this example, removing all C/c units was best, producing the answer 4.
+
+What is the length of the shortest polymer you can produce by removing all units of exactly one type and fully reacting the result?"""
+
+from os import register_at_fork
+import string
 import timeit
 UP_LOW_DEFFERENCE = 32
+PATTERN = [(ch, ch.upper()) for ch in string.ascii_lowercase]
 
 
 def getListFromFile(filePath):
-    print(filePath)
     file = open(filePath, 'r')
-    res = list(file.read())
+    res = file.read()
     file.close()
     return res
 
@@ -43,18 +64,17 @@ def if_exist_delete_combination(big, small, cur_unit_index, input_list):
     return cur_unit_index+1
 
 
-def getResultSeq(input_list):
+def filerList(input_list):
     previous_input_length = 0
 
     while True:
         input_length = len(input_list)
         if previous_input_length == input_length:
-            break
-
+            return input_list
         previous_input_length = input_length
 
         if input_length < 2:
-            break
+            return input_list
 
         for i in range(input_length):
 
@@ -70,9 +90,20 @@ def getResultSeq(input_list):
             else:
                 i = if_exist_delete_combination(
                     next, current, i, input_list)
-    print(len(input_list))
 
 
-input_list = getListFromFile('_2018/day5/input')
-getResultSeq(input_list)
-#print(timeit.timeit(run, number=1))
+def getMinLength(input_str):
+    minLegnth = -1
+    filtered_start_seq = ''.join(filerList(list(input_str)))
+    for ch in PATTERN:
+        temp = filtered_start_seq.replace(ch[0], '')
+        temp = temp.replace(ch[1], '')
+        cur_legnth = len(filerList(list(temp)))
+        if minLegnth < 0 or minLegnth > cur_legnth:
+            minLegnth = cur_legnth
+    return minLegnth
+
+
+input_str = getListFromFile('_2018/day5/input')
+
+print(getMinLength(input_str))
