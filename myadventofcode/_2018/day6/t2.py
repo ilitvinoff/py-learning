@@ -95,7 +95,9 @@ def getData():
         return data
 
 
-def buildGrid(points, grid):
+def buildGrid(points):
+    grid = []
+
     max_x = 0
     max_y = 0
     min_x = -1
@@ -116,7 +118,7 @@ def buildGrid(points, grid):
         for y in range(res[3], res[1]):
             grid.append((x, y))
 
-    return res
+    return grid
 
 
 def isWithinLookedRegion(current_point, points):
@@ -132,6 +134,7 @@ def getArea(points):
     grid = []
     counter = 0
 
+    grid = buildGrid(points)
     for current_point in grid:
         if isWithinLookedRegion(current_point, points):
             counter += 1
@@ -140,5 +143,7 @@ def getArea(points):
 
     #print(max_x, max_y, min_x, min_y)
 
+
+print(getData())
 
 getArea(getData())
