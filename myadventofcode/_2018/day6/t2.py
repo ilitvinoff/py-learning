@@ -80,6 +80,8 @@ Your actual region will need to be much larger than this example, though, instea
 What is the size of the region containing all locations which have a total distance to all given coordinates of less than 10000?"""
 
 import collections
+from os import curdir
+from typing import Counter
 
 TOTAL_DISTANCE_LIMIT = 10000
 PATH = '_2018/day6/input'
@@ -117,44 +119,24 @@ def buildGrid(points, grid):
     return res
 
 
-def isInfiniteCoordinate(owner_point, infinite_coordinates):
-    return (owner_point[0] == infinite_coordinates[0]
-            or owner_point[0] == infinite_coordinates[2]
-            or owner_point[1] == infinite_coordinates[1]
-            or owner_point[1] == infinite_coordinates[3])
+def isWithinLookedRegion(current_point, points):
+    sum = 0
+    for point in points:
+        sum += abs(point[0]-current_point[0])+abs(point[1]-current_point[1])
+
+    return sum < TOTAL_DISTANCE_LIMIT
 
 
 def getArea(points):
     # {Tuple(grid point coordinates): Tuple(owner_point coordinates)}
     grid = []
-    area_counter = collections.Counter()
-    infinite_area_owners = []
+    counter = 0
 
-    infinite_coordinates = buildGrid(points, grid)
-    for grid_coordinates in grid:
-        distances = collections.defaultdict(list)
+    for current_point in grid:
+        if isWithinLookedRegion(current_point, points):
+            counter += 1
 
-        for owner_candidate in points:
-            distance = (abs(owner_candidate[0]-grid_coordinates[0]) +
-                        abs(owner_candidate[1]-grid_coordinates[1]))
-            distances[distance].append(owner_candidate)
-
-        sorted_distances = sorted(distances.keys(), reverse=True)
-
-        if len(distances[sorted_distances[-1]]) < 2:
-            owner_point = distances[sorted_distances[-1]][0]
-
-            if isInfiniteCoordinate(grid_coordinates, infinite_coordinates):
-                infinite_area_owners.append(owner_point)
-
-                if owner_point in area_counter:
-                    del area_counter[owner_point]
-                    continue
-
-            if owner_point not in infinite_area_owners:
-                area_counter[owner_point] += 1
-
-    print('most_common:', area_counter.most_common(1))
+    print("region's size", counter)
 
     #print(max_x, max_y, min_x, min_y)
 
